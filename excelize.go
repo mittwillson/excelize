@@ -108,6 +108,7 @@ type Options struct {
 	LongDatePattern   string
 	LongTimePattern   string
 	CultureInfo       CultureName
+	SaveAfterCalc     bool
 }
 
 // OpenFile take the name of a spreadsheet file and returns a populated

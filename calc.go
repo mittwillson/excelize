@@ -829,6 +829,13 @@ func (f *File) CalcCellValue(sheet, cell string, opts ...Options) (result string
 		result = token.String
 		return
 	}
+	if f.options.SaveAfterCalc {
+		defer func() {
+			if err == nil {
+				err = f.SetV(sheet, cell, token.Value())
+			}
+		}()
+	}
 	if !rawCellValue {
 		styleIdx, _ = f.GetCellStyle(sheet, cell)
 	}

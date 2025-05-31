@@ -459,6 +459,28 @@ func (f *File) setCellString(value string) (t, v string, err error) {
 	return
 }
 
+func (f *File) SetV(sheet, cell, value string) error {
+	f.mu.Lock()
+	ws, err := f.workSheetReader(sheet)
+	if err != nil {
+		f.mu.Unlock()
+		return err
+	}
+	f.mu.Unlock()
+	ws.mu.Lock()
+	defer ws.mu.Unlock()
+	c, col, row, err := ws.prepareCell(cell)
+	if err != nil {
+		return err
+	}
+	c.S = ws.prepareCellStyle(col, row, c.S)
+	if c.T, c.V, err = f.setCellString(value); err != nil {
+		return err
+	}
+	c.IS = nil
+	return nil
+}
+
 // sharedStringsLoader load shared string table from system temporary file to
 // memory, and reset shared string table for reader.
 func (f *File) sharedStringsLoader() (err error) {
